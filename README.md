@@ -6,7 +6,7 @@ A package for linear, time invariant control systems for symbolic python.
 
 There is currently no installer for this package. Just clone the repository and use:
 ```python
-sys.path.append('C:\Users\Benedikt\SkyDrive\Documents\Progra\sympy\lti systems')
+sys.path.append('PATH\TO\YOUR\LOCAL\COPY')
 from lti_systems import *
 ```
 or copy the lti_systems folder in your project folder.

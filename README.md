@@ -11,7 +11,7 @@ sys.path.append('C:\Users\Benedikt\SkyDrive\Documents\Progra\sympy\lti systems')
 from lti_systems import *
 ```
 or copy the lti_systems folder in your project folder.
-=======
+
 ## Usage
 
 TODO: Write usage instructions

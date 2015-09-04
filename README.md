@@ -2,8 +2,7 @@
 
 A package for linear, time invariant control systems for symbolic python.
 
-<<<<<<< HEAD
-# Installation
+## Installation
 
 There is currently no installer for this package. Just clone the repository and use:
 ```python
@@ -15,4 +14,4 @@ or copy the lti_systems folder in your project folder.
 ## Usage
 
 TODO: Write usage instructions
->>>>>>> origin/master
+

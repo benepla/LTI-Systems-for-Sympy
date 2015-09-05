@@ -16,7 +16,16 @@ _matrixTypes = (
 # matrix_degree(m)
 #
 def matrix_degree(m, s):
-    """returns the highest degree of any entry in m with respect to s"""
+    """returns the highest degree of any entry in m with respect to s
+
+    Parameters
+    ==========
+
+    m: Matrix
+        matrix to get degree from
+    s: Symbol
+        Symbol to get degree from (degree can be ambiguous with multiple coefficients in a expression)
+    """
     deg = 0
     try:
         for row in m.tolist():
@@ -33,9 +42,24 @@ def matrix_degree(m, s):
 # matrix_unit((i,j),(n,k))
 #
 def matrix_unit((i, j), (n, k)):
-    """returns a i x j matrix where all entries are zero except the (n,k)th, which is one"""
-    res = zeros(i, j)
-    res[n, k] = 1
+    """returns a i x j matrix where all entries are zero except the (n,k)th, which is one
+
+    Parameters
+    ==========
+
+    (i, j): Tuple of integers
+        shape of the desired matrix unit
+    (n, k): Tuple of integers
+        position of the entry which should be one
+    """
+    if not (n < i and k < j and n >= 0 and k >= 0):
+        raise ValueError("n, k must be postitive and in the range of i, j")
+
+    try:
+        res = zeros(i, j)
+        res[n, k] = 1
+    except TypeError:
+        raise TypeError("i, j, n, k must be integers!")
     return res
 
 
@@ -43,7 +67,16 @@ def matrix_unit((i, j), (n, k)):
 # matrix_coeff(m)
 #
 def matrix_coeff(m, s):
-    """returns the matrix valued coefficients N_i in m(x) = N_1 * x**(n-1) + N_2 * x**(n-2) + .. + N_deg(m)"""
+    """returns the matrix valued coefficients N_i in m(x) = N_1 * x**(n-1) + N_2 * x**(n-2) + .. + N_deg(m)
+
+    Parameters
+    ==========
+
+    m : Matrix
+        matrix to get coefficient matrices from
+    s :
+        symbol to compute coefficient list (coefficients are ambiguous for expressins with multiple symbols)
+    """
 
     m_deg = matrix_degree(m, s)
     res = [zeros(m.shape[0], m.shape[1])] * (m_deg + 1)
@@ -161,6 +194,9 @@ def vectorize(M, sparse=False):
     m : Matrix
         matrix to vectorize
 
+    Flags
+    =====
+
     sparse = False
         set True if input is an instance of sparse matrix
 
@@ -197,6 +233,28 @@ def vectorize(M, sparse=False):
 #
 def inverse_vectorize(n, m, v, sparse=False):
     """ computes a matrix M of shape (n, m) from the vector v, so that M = inverse_vectorize(vectorize(M))
+
+    Parameters
+    ==========
+
+    n, m : integers
+        shape of desired matrix
+
+    m : Matrix
+        matrix to inverse vectorize
+
+    Flags
+    =====
+
+    sparse = False
+        set True if input is an instance of sparse matrix
+
+    Reference
+    =========
+
+    Wikipedia - Vectorization(mathematics)
+    https://en.wikipedia.org/wiki/Vectorization_%28mathematics%29
+
     """
     if not isinstance(v, _matrixTypes):
         raise TypeError("v must be one of", _matrixTypes, "but is", type(v))
@@ -237,11 +295,30 @@ def _sparse_matrix_tensor_product(A, B):
 #
 # SylvsterSolve(A, B, C)
 
-def SylvesterSolve(A, B, C, method=None, sparse=False, **kwargs):
+def SylvesterSolve(A, B, C, linear_sys=False, sparse=False, **kwargs):
     """solves the Sylvester Equation AX + XB = C for X
 
     A and B must be square matrices of shape n x n and m x m. Then C must have shape n x m and
-    X has shape n x m aswell
+    X has shape n x m aswell.
+    The Solution of the equation is obtainned by vectorizing the equation. This can be very constly but allways
+    returns a solution if it exists.
+
+    Parameters
+    ==========
+
+    A, B, C : Matrix
+        the matrices in AX + XB = C
+
+    Flags
+    =====
+
+    linear_sys=False
+        if True, a linear system is created to solve for the entries of X, and the solution is compute with solve()
+    **kwargs:
+        and keyword arguments that solve() takes can be given the function to pass to solve(). This has no effect if
+        linear_sys is False
+    sparse=False
+        If True, the function assumes that the matrix is an instance of SpareMatrix. This can save huge amounts of time.
     """
     if not all(isinstance(m, _matrixTypes) for m in (A, B, C)):
         raise TypeError("Arguments must be matrixes")
@@ -265,7 +342,7 @@ def SylvesterSolve(A, B, C, method=None, sparse=False, **kwargs):
             ).solve(vectorize(C), method=method)
         )
     elif sparse is True:
-        if method == 'linear_system':
+        if linear_sys is True:
 
             print 'create SparseLinearSystem ..'
             toSolve = _sparse_matrix_tensor_product(
@@ -326,6 +403,14 @@ def LyapunovSolve(A, C, **kwargs):
 
     As the Lyapunov Equation is a special case of the sylvester equation, the function
     curretly serves as a wrapper for the 'SylvesterSolve' function
+
+    Parameters
+    ==========
+
+    A, C : Matrix
+        The matrices A, C in AX + XA = C
+    **kwargs
+        See 'SilvesterSolve' for valid keyword arguments
     """
     return SylvesterSolve(A, A.adjoint(), C, **kwargs)
 
@@ -352,6 +437,23 @@ class Talbot(object):
     Talbot method is very powerful here we see an error of 3.3e-015
     with only 24 function evaluations
 
+    Parameters
+    ==========
+    F=F: expression
+        Function to get the inverse Laplace transformation from
+    shift=0.0
+        Shift contour to the right in case there is a pole on the
+          positive real axis :
+        Note the contour will not be optimal since it was originally devoloped
+          for function with singularities on the negative real axis For example
+          take F(s) = 1/(s-1), it has a pole at s = 1, the contour needs to be
+          shifted with one unit, i.e shift  = 1.
+    N=24
+        Number of Function evalutations per call. Try to get this up if the Error is to large.
+
+    Reference
+    =========
+
     Created by Fernando Damian Nieuwveldt
     email:fdnieuwveldt@gmail.com
     Date : 25 October 2009
@@ -360,13 +462,12 @@ class Talbot(object):
     email: Dieter.Kadelka@kit.edu
     Date : 27 October 2009
 
-    Reference
     L.N.Trefethen, J.A.C.Weideman, and T.Schmelzer. Talbot quadratures
     and rational approximations. BIT. Numerical Mathematics,
     46(3):653 670, 2006.
     """
 
-    def __init__(self, F=F, shift=0.0):
+    def __init__(self, F=F, shift=0.0, N=24):
         self.F = F
         # test = Talbot() or test = Talbot(F) initializes with testfunction F
 
@@ -379,7 +480,7 @@ class Talbot(object):
         #   shifted with one unit, i.e shift  = 1.
         # But in the test example no shifting is necessary
 
-        self.N = 24
+        self.N = N
         # with double precision this constant N seems to best for the testfunction
         #   given. For N = 22 or N = 26 the error is larger (for this special
         #   testfunction).
@@ -419,4 +520,4 @@ class Talbot(object):
             dz = self.N / t * (-c1 * c2 * theta / sin(c2 * theta)**2 + c1 / tan(c2 * theta) + c4)
             ans += exp(z * t) * self.F(z) * dz
 
-        return ((h / (2j * pi)) * ans).real 
+        return ((h / (2j * pi)) * ans).real

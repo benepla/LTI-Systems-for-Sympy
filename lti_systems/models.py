@@ -508,7 +508,7 @@ class TransferFunctionModel:
     arg : StateSpaceModel, Matrix
         the state space model to contruct the transfer function model from, or the transfer matrix G
     s = None : Symbol
-        the variable G is dependent from. only has to be set if arg is a non-constant matrix
+        the variable G is dependent from. only has to be set if arg is a non-constant matrix or StateSpaceModel
 
     See Also
     ========

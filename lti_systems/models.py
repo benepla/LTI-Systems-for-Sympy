@@ -445,7 +445,7 @@ class StateSpaceModel:
                   ----  y2
         """
         if not isinstance(anotherSystem, StateSpaceModel):
-            raise TypeError("Argument must be of type StateSpaceModel")
+            raise TypeError("Argument must be of type StateSpaceModel, not %r" % (type(anotherSystem)))
         # assert matching shapes
         if not ((self.represent[1].shape[1] == anotherSystem.represent[1].shape[1]) and
                 (self.represent[2].shape[0] == anotherSystem.represent[2].shape[0])):

@@ -4,12 +4,14 @@ A package for linear, time invariant control systems for symbolic python.
 
 ## Installation
 
-There is currently no installer for this package. Just clone the repository and use:
-```python
-sys.path.append('PATH\TO\YOUR\LOCAL\COPY')
-from lti_systems import *
+There is a python installer for this package. You can download the *.zip* file in the `dist` folder or clone the whole repository using
+```bash
+git clone https://github.com/m3zz0m1x/LTI-Systems-for-Sympy.git
 ```
-or copy the lti_systems folder in your project folder.
+After extracting, cd in the direcory and run
+```bash
+python setup.py install
+```
 
 ## Usage
 

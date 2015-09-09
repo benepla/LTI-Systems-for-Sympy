@@ -1,6 +1,6 @@
 # LTI-Systems-for-Sympy
 
-A package for linear, time invariant control systems for symbolic python. This is very new and has only basic functionality as transforming StateSpaceModels and TransferFunctionModels into one another and evaluating the systems symbolicaly and numericaly. Furthermore the `utils` module provides some basic tools the `models`module uses but which can be useful for working linear systems in general. (such as Lyapunov Equation solver, numerical inverse Laplace Transform, matrix vectorization and tools for matrix valued Polynomials).
+A package for linear, time invariant control systems for symbolic python. This is very new and has only basic functionality as transforming StateSpaceModels and TransferFunctionModels into one another and evaluating the systems symbolicaly and numericaly. Furthermore the `utils` module provides some basic tools the `models`module uses.
 
 ## Installation
 
@@ -18,8 +18,6 @@ python setup.py install
 Include the modules in your program using:
 ```python
 from lti_systems import *
-mod = models
-utl = utils
 ```
 
 ### Creating models
@@ -33,13 +31,13 @@ A, B, C, D = Matrix([a]), Matrix([b]), Matrix([c]), Matrix([d])
 var('s, num, denom')
 T = Matrix([num /denom], s)
 
-ssm = mod.StateSpaceModel([A, B, C, D])
-tfm = mod.TransferFunctionModel(T)
+ssm = StateSpaceModel([A, B, C, D])
+tfm = TransferFunctionModel(T)
 ```
 You can also create the models from one another:
 ```python
-ssm2 = mod.StateSpaceModel(tfm)
-tfm2 = mod.TransferFunctionModel(ssm, s)
+ssm2 = StateSpaceModel(tfm)
+tfm2 = TransferFunctionModel(ssm, s)
 ```
 
 ### Evaluating models

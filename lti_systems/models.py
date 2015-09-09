@@ -408,6 +408,18 @@ class StateSpaceModel(object):
                ----    z	 ----
         u --> | P1 | -----> | P2 | --> y
                ----          ----
+
+        Parameters
+        ==========
+
+        anotherSystem : StateSpaceModel
+            StateSpace representation of the model you want to interconnect with
+            the current model
+
+        See Also
+        ========
+
+        parallel: parallel interconnection of two systems
         """
         if not isinstance(anotherSystem, StateSpaceModel):
             raise TypeError("Argument must be of type StateSpaceModel")
@@ -439,6 +451,18 @@ class StateSpaceModel(object):
             |     ----    |+
              --> | P2 |---
                   ----  y2
+
+        Parameters
+        ==========
+
+        anotherSystem : StateSpaceModel
+            StateSpace representation of the model you want to interconnect with
+            the current model
+
+        See Also
+        ========
+
+        cascade: cascade interconnection of two systems
         """
         if not isinstance(anotherSystem, StateSpaceModel):
             raise TypeError("Argument must be of type StateSpaceModel, not %r" % (type(anotherSystem)))
@@ -462,7 +486,7 @@ class StateSpaceModel(object):
     #   the class tries to pass the method to the matrices in self.represent
     def __getattr__(self, name):
 
-        # dont overwrite private or magic functions!
+        # dont overwrite private or magic function attribute testing!
         if name[0] == '_':
             raise AttributeError("%r object has no attribute %r" %
                                  (self.__class__, name))
@@ -590,7 +614,7 @@ class TransferFunctionModel(object):
     #   the class tries to pass the method to the matrix self.G
     def __getattr__(self, name):
 
-        # dont overwrite private or magic functions!
+        # dont overwrite private or magic function attribute testing!
         if name[0] == '_':
             raise AttributeError("%r object has no attribute %r" %
                                  (self.__class__, name))
